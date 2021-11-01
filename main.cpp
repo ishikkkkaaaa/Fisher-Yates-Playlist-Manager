@@ -15,6 +15,14 @@ BOOL gotoxy(const WORD x, const WORD y)
     xy.Y = y;
     return SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), xy);
 }
+
+void swap(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 class musicplaylist
 {
 private:
@@ -56,6 +64,7 @@ void musicplaylist::getdata()
     cin.getline(genre, 10);
     gotoxy(10, 15); cout << "R A T I N G : ";
     cin >> rating;
+
 }
 
 /*
@@ -269,13 +278,6 @@ void edit()
     } while (temp != 4);
 }
 
-void swap(int* a, int* b)
-{
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
 void printArray(int arr[], int n)
 {
     cout << endl;
@@ -332,6 +334,68 @@ void fisher_yates()
     f.close();
 }
 
+void sort_songnumber()
+{
+    char choice = 'n';
+    fstream f("Playlist.dat", ios::binary | ios::in);
+    musicplaylist mp;
+    int songnumber_array[10];
+    int n = sizeof(songnumber_array) / sizeof(songnumber_array[0]);
+    int k = 0;
+    while (f.read((char*)&mp, sizeof(mp)))
+    {
+        songnumber_array[k] = mp.ret_songno();
+        k++;
+    }
+    f.close();
+    cout << "U N S O R T E D   S O N G   N O  : \t";
+    for (int i = 0; i < n; i++)
+    {
+        if (songnumber_array[i] >= 0)
+        {
+            cout <<" "<< songnumber_array[i];
+        }
+
+    }
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - 1 - i; j++)
+        {
+            if (songnumber_array[j] > songnumber_array[j + 1])
+            {
+                swap(&songnumber_array[j], &songnumber_array[j + 1]);
+            }
+        }
+    }
+    gotoxy(63, 3); cout << " S O R T E D   S O N G   N U M B E R   L I S T ";
+    int l=6;
+    for (int i = 0; i < n; i++)
+    {
+        if (songnumber_array[i] >= 0)
+        {
+            gotoxy(83, l); cout << songnumber_array[i];
+            l++;
+        }
+
+    }
+    gotoxy(110, 35); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]  :  ";
+    cin >> choice;
+
+    if (choice == 'y' || choice == 'Y')
+    {
+
+        cout << "SAVED";
+        Sleep(1000);
+    }
+
+    if (choice == 'n' || choice == 'N')
+    {
+
+    }
+}
+
+
 void sorting_songs()
 {
     int temp = 0;
@@ -340,17 +404,17 @@ void sorting_songs()
     {
         system("CLS");
         gotoxy(77, 13); cout << "S O R T  A C C O R I D N G  T O... ";
-        gotoxy(77, 17); cout << "1.A C C O R D I N G  T O  N A M E : "; //merge sort
-        gotoxy(77, 19); cout << "2.A C C O R D I N G  T O  A R T I S T : ";//quick sort
-        gotoxy(77, 21); cout << "3.A C C O R D I N G  T O  G E N R E : ";//heap sort
-        gotoxy(77, 23); cout << "4.B A C K : ";
+        gotoxy(77, 17); cout << "1.A C C O R D I N G  T O  S O N G   N O : "; //bubble sort
+        gotoxy(77, 19); cout << "2.A C C O R D I N G  T O  N A M E : "; //merge sort
+        gotoxy(77, 21); cout << "3.A C C O R D I N G  T O  A R T I S T : ";//quick sort
+        gotoxy(77, 23); cout << "4.A C C O R D I N G  T O  G E N R E : ";//heap sort
+        gotoxy(77, 25); cout << "5.B A C K : ";
         cin >> temp;
 
         if (temp == 1)
         {
             system("CLS");
-            gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
-            cin >> choice;
+            sort_songnumber();
         }
         else if (temp == 2)
         {
@@ -364,9 +428,14 @@ void sorting_songs()
             gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
             cin >> choice;
         }
-    } while (temp != 4);
+        else if (temp == 4)
+        {
+            system("CLS");
+            gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
+            cin >> choice;
+        }
+    } while (temp != 5);
 }
-
 int main()
 {
     int choice = 0;
