@@ -46,7 +46,7 @@ musicplaylist::musicplaylist()
 }
 musicplaylist::~musicplaylist()
 {
-    cout << "\n\n\n F I N I S H E D  T A S K \n\n\n";
+    cout << "\n\n\n  \n\n\n";
 }
 
 void musicplaylist::getdata()
@@ -190,6 +190,7 @@ void delete_song()
         cout << endl << endl;
     }
 }
+
 void search_song()
 {
     gotoxy(10, 3);
@@ -213,6 +214,8 @@ void search_song()
         gotoxy(80, 25); cout << " NO SUCH SONG EXIST IN THE DATA";
     }
 }
+
+
 /*
 void modify_song()
 {
@@ -278,61 +281,107 @@ void edit()
     } while (temp != 4);
 }
 
-void printArray(int arr[], int n)
+void printArray(int songnumber_array[], int n)
 {
     cout << endl;
     for (int i = 0; i < n; i++)
     {
-        if (arr[i] >= 1 && arr[i] <= 191)
+        if (songnumber_array[i] >= 1 && songnumber_array[i] <= 191)
         {
-            cout << arr[i]<<"\t";
+            cout << songnumber_array[i]<<"\t";
         }
     }
     cout << endl;
 }
 
-void randomize(int arr[], int n)
+void randomize(int songnumber_array[], int n)
 {
     srand(time(NULL));
+
     for (int i = n - 1; i > 0; i--)
     {
         int j = rand() % (i + 1);
-        swap(&arr[i], &arr[j]);
+        swap(&songnumber_array[i], &songnumber_array[j]);
     }
 }
+
+void search_song_for_shuffling(int songnumber_array[], int n)
+{
+    fstream f("playlist.dat", ios::binary | ios::in);
+    musicplaylist mp;
+
+    int songnumber = songnumber_array[0];
+
+    while (f.read((char*)&mp, sizeof(mp)))
+    {
+        if (songnumber == mp.ret_songno())
+        {
+            mp.showdata();
+            Sleep(1000);
+        }
+    }
+    f.close();
+
+    for (int i = 0; i < n; i++)
+        songnumber_array[i] = songnumber_array[i + 1];
+
+}
+
+void display_fisher_yates(int songnumber_array[], int n)
+{
+    cout << endl << endl;
+    cout << "F I S H E R  Y A T E S  A L G O R I T H M \n";
+    printArray(songnumber_array, n);
+    cout << endl;
+    system("PAUSE");
+
+    for (int i = 0; i < n; i++)
+    {
+        search_song_for_shuffling(songnumber_array, n);
+        system("CLS");
+
+    }
+
+}
+
+
 
 void fisher_yates()
 {
     fstream f("playlist.dat", ios::binary | ios::in);
     musicplaylist mp;
-    int arr[6],k=0;
-    int n = sizeof(arr) / sizeof(arr[0]);
-    for (int i = 0; i <n; i++)
-    {
-        arr[i] = k;
-        k++;
-    }
-    randomize(arr, n);
-    
-    int songnumber = 0;
-    
+
+    int songnumber_array[200];
+
+    int n = sizeof(songnumber_array) / sizeof(songnumber_array[0]);
+
+    int k = 0;
     while (f.read((char*)&mp, sizeof(mp)))
     {
-         cout << "F I S H E R  Y A T E S  A L G O R I T H M \n";
-        printArray(arr, n);
-        songnumber = mp.ret_songno();
-        for (int i = 0; i < n; i++)
-        {
-            if (arr[i] == songnumber)
-            {
-                mp.showdata();
-                Sleep(1000);
-            }
-        }
-        system("CLS");
+        songnumber_array[k] = mp.ret_songno();
+        k++;
     }
-    f.close();
+
+    for (int i = 0; i < n; i++)
+    {
+        if (songnumber_array[i] >= 0)
+        {
+            cout << songnumber_array[i] << " ";
+        }
+
+        else
+        {
+            songnumber_array[i] = 0;
+        }
+
+    }
+    cout << endl;
+    system("PAUSE");
+    randomize(songnumber_array, n);
+    display_fisher_yates(songnumber_array, n);
 }
+
+
 
 void sort_songnumber()
 {
@@ -390,9 +439,7 @@ void sort_songnumber()
     }
 
     if (choice == 'n' || choice == 'N')
-    {
-
-    }
+    {}
 }
 
 
@@ -472,10 +519,7 @@ int main()
         else if (choice == 4)
         {
             system("CLS");
-            // bubble sort for comparision
             fisher_yates();
-
-            system("PAUSE");
         }
         else if (choice == 5)
         {
