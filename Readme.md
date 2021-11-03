@@ -1,5 +1,8 @@
 # SMART PLAYTLIST MANAGER
-<p></p>
+<p>
+SRS Link => https://docs.google.com/document/d/1oKaJ7tWlflbh6mYBAARPpOS_VzVjKHf4/edit?usp=sharing&ouid=112284160175451431408&rtpof=true&sd=true
+</p>
+
 
 synopsis link- 
 https://docs.google.com/document/d/1Rihy_uLUu18TXPlaYRs1KVXAEV3QXpTI/edit?usp=sharing&ouid=113645728901246292546&rtpof=true&sd=true
