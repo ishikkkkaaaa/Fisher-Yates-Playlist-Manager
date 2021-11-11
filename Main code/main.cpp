@@ -39,9 +39,9 @@ public:
 musicplaylist::musicplaylist()
 {
     songno = 0;
-    strcpy_s(name, "NULL");
-    strcpy_s(artist, "NULL");
-    strcpy_s(genre, "NULL");
+    name;
+    artist;
+    genre;
     rating = 0.0;
 }
 musicplaylist::~musicplaylist()
