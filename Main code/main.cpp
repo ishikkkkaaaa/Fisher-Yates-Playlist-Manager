@@ -1,11 +1,9 @@
 #include<iostream>
-#include<stdio.h>
 #include<windows.h>
 #include<stdlib.h>
 #include<string>
 #include<fstream>
-#include<time.h>
-
+#include<math.h>
 using namespace std;
 
 BOOL gotoxy(const WORD x, const WORD y)
@@ -29,13 +27,17 @@ private:
     int songno;
     char name[40], artist[40], genre[40];
     float rating;
+
 public:
     musicplaylist();
     void getdata();
     void showdata();
     int ret_songno();
+    void songname();
+    char* ret_songname();
     ~musicplaylist();
 };
+
 musicplaylist::musicplaylist()
 {
     songno = 0;
@@ -51,7 +53,6 @@ musicplaylist::~musicplaylist()
 
 void musicplaylist::getdata()
 {
-    string temp;
     gotoxy(15, 4); cout << "ENTER THE SONG DETAILS:  \n";
     gotoxy(10, 7); cout << "S O N G  NO. : ";
     cin >> songno;
@@ -64,14 +65,10 @@ void musicplaylist::getdata()
     cin.getline(genre, 10);
     gotoxy(10, 15); cout << "R A T I N G : ";
     cin >> rating;
-
 }
 
 /*
 for the csv file
-.
-.
-.
 void create_list()
 {
     fstream f;
@@ -86,7 +83,6 @@ void create_list()
 
 void create()
 {
-    system("CLS");
     fstream f("playlist.dat", ios::binary | ios::out | ios::app);
     musicplaylist mp;
     mp.getdata();
@@ -108,13 +104,18 @@ int musicplaylist::ret_songno()
 {
     return songno;
 }
-
+char* musicplaylist::ret_songname()
+{
+    return name;
+}
 
 void display_list()
 {
     system("CLS");
     int k = 7, l = 20;
+   
     fstream fin;
+
     string data;
 
     gotoxy(75, 3); cout << "T H E    P L A Y L I S T ..... ";
@@ -153,8 +154,10 @@ void delete_song()
     fstream f1("playlist.dat", ios::binary | ios::in);
     fstream f2("temp.dat", ios::binary | ios::out);
     musicplaylist mp;
+    
     int songnumber, found = 0;
     char confirm = 'y';
+
     cout << "ENTER THE SONG NO. : ";
     cin >> songnumber;
 
@@ -170,6 +173,7 @@ void delete_song()
 
             if (confirm == 'n' || confirm == 'N')
                 f2.write((char*)&mp, sizeof(mp));
+
             else
                 cout << " R E C O R D   D E L E T E D ..............";
         }
@@ -197,9 +201,11 @@ void search_song()
     int found = 0;
     fstream f("playlist.dat", ios::binary | ios::in);
     musicplaylist mp;
+    
     int songnumber;
     cout << "ENTER THE SONG NUMBER TO BE SEARCHED FOR : ";
     cin >> songnumber;
+
     while (f.read((char*)&mp, sizeof(mp)))
     {
         if (songnumber == mp.ret_songno())
@@ -216,7 +222,6 @@ void search_song()
 }
 
 
-/*
 void modify_song()
 {
     fstream f("playlist.dat", ios::binary | ios::in | ios::out);
@@ -232,11 +237,12 @@ void modify_song()
             mp.showdata();
             found = 1;
             cout << endl << endl;
+            system("PAUSE");
+            system("CLS");
             cout << "ENTER NEW DETAILS : ";
             mp.getdata();
-            f.seekp(f.tellg(0,f.end)-sizeof(mp), ios::beg);
             f.write((char*)&mp, sizeof(mp));
-            gotoxy(80, 25); cout << "S O N G   M O D I F I E D";
+            gotoxy(90, 25); cout << "S O N G   M O D I F I E D";
             break;
         }
     }
@@ -245,8 +251,7 @@ void modify_song()
     {
         cout << "NO SUCH SONG EXIST IN THE DATA";
     }
-}*/
-
+}
 void edit()
 {
     int temp = 0;
@@ -271,13 +276,13 @@ void edit()
             system("CLS");
             search_song();
             system("PAUSE");
-        }/*
+        }
         else if (temp == 3)
         {
             system("CLS");
             modify_song();
             system("PAUSE");
-        }*/
+        }
     } while (temp != 4);
 }
 
@@ -296,7 +301,7 @@ void printArray(int songnumber_array[], int n)
 
 void randomize(int songnumber_array[], int n)
 {
-    srand(time(NULL));
+    srand(time_t(NULL));
 
     for (int i = n - 1; i > 0; i--)
     {
@@ -329,19 +334,13 @@ void search_song_for_shuffling(int songnumber_array[], int n)
 
 void display_fisher_yates(int songnumber_array[], int n)
 {
-    cout << endl << endl;
-    cout << "F I S H E R  Y A T E S  A L G O R I T H M \n";
-    printArray(songnumber_array, n);
-    cout << endl;
-    system("PAUSE");
-
     for (int i = 0; i < n; i++)
     {
+        cout << "F I S H E R  Y A T E S  A L G O R I T H M \n";
+        printArray(songnumber_array, n);
         search_song_for_shuffling(songnumber_array, n);
         system("CLS");
-
     }
-
 }
 
 
@@ -351,7 +350,7 @@ void fisher_yates()
     fstream f("playlist.dat", ios::binary | ios::in);
     musicplaylist mp;
 
-    int songnumber_array[200];
+    int songnumber_array[20];
 
     int n = sizeof(songnumber_array) / sizeof(songnumber_array[0]);
 
@@ -377,6 +376,7 @@ void fisher_yates()
     }
     cout << endl;
     system("PAUSE");
+    system("CLS");
     randomize(songnumber_array, n);
     display_fisher_yates(songnumber_array, n);
 }
@@ -388,7 +388,8 @@ void sort_songnumber()
     char choice = 'n';
     fstream f("Playlist.dat", ios::binary | ios::in);
     musicplaylist mp;
-    int songnumber_array[10];
+    int songnumber_array[20];
+
     int n = sizeof(songnumber_array) / sizeof(songnumber_array[0]);
     int k = 0;
     while (f.read((char*)&mp, sizeof(mp)))
@@ -402,11 +403,11 @@ void sort_songnumber()
     {
         if (songnumber_array[i] >= 0)
         {
-            cout <<" "<< songnumber_array[i];
+            cout << " " << songnumber_array[i];
         }
 
     }
-
+    //BUBBLE SORT
     for (int i = 0; i < n - 1; i++)
     {
         for (int j = 0; j < n - 1 - i; j++)
@@ -418,7 +419,7 @@ void sort_songnumber()
         }
     }
     gotoxy(63, 3); cout << " S O R T E D   S O N G   N U M B E R   L I S T ";
-    int l=6;
+    int l = 6;
     for (int i = 0; i < n; i++)
     {
         if (songnumber_array[i] >= 0)
@@ -428,20 +429,59 @@ void sort_songnumber()
         }
 
     }
-    gotoxy(110, 35); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]  :  ";
+    gotoxy(110, 25); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]  :  ";
     cin >> choice;
 
     if (choice == 'y' || choice == 'Y')
     {
-
         cout << "SAVED";
+        fstream f("NEW_PLAYLIST.dat", ios::binary | ios::in | ios::app);
+        Sleep(2000);
+    }
+    if (choice == 'n' || choice == 'N')
+    {
+        cout << "\n";
+        cout << " O H   O K !";
         Sleep(1000);
     }
-
-    if (choice == 'n' || choice == 'N')
-    {}
 }
 
+
+void sort_songname()
+{
+    musicplaylist mp;
+    fstream f("Playlist.dat", ios::binary | ios::in);
+    int songnumber_array[20];
+
+    int n = sizeof(songnumber_array) / sizeof(songnumber_array[0]);
+    int k = 0;
+    while (f.read((char*)&mp, sizeof(mp)))
+    {
+        songnumber_array[k] = mp.ret_songno();
+        k++;
+    }
+    f.close();
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - 1 - i; j++)
+        {
+            if (songnumber_array[j] > songnumber_array[j + 1])
+            {
+                swap(&songnumber_array[j], &songnumber_array[j + 1]);
+            }
+        }
+    }
+    search_song_for_shuffling(songnumber_array,n);
+
+    for (int i = 0; i < n; i++)
+    {
+        system("CLS");
+        cout << "S O R T E D   S O N G   N A M E S \n";
+        printArray(songnumber_array, n);
+        search_song_for_shuffling(songnumber_array, n);
+    }
+}
 
 void sorting_songs()
 {
@@ -451,11 +491,11 @@ void sorting_songs()
     {
         system("CLS");
         gotoxy(77, 13); cout << "S O R T  A C C O R I D N G  T O... ";
-        gotoxy(77, 17); cout << "1.A C C O R D I N G  T O  S O N G   N O : "; //bubble sort
-        gotoxy(77, 19); cout << "2.A C C O R D I N G  T O  N A M E : "; //merge sort
-        gotoxy(77, 21); cout << "3.A C C O R D I N G  T O  A R T I S T : ";//quick sort
-        gotoxy(77, 23); cout << "4.A C C O R D I N G  T O  G E N R E : ";//heap sort
-        gotoxy(77, 25); cout << "5.B A C K : ";
+        gotoxy(77, 17); cout << "1.A C C O R D I N G  T O  S O N G   N O : "; 
+        gotoxy(77, 19); cout << "2.A C C O R D I N G  T O  N A M E : "; 
+        //gotoxy(77, 21); cout << "3.A C C O R D I N G  T O  A R T I S T : ";
+        //gotoxy(77, 23); cout << "4.A C C O R D I N G  T O  G E N R E : ";
+        gotoxy(77, 21); cout << "3.B A C K : ";
         cin >> temp;
 
         if (temp == 1)
@@ -466,22 +506,38 @@ void sorting_songs()
         else if (temp == 2)
         {
             system("CLS");
+
+            musicplaylist mp;
+            fstream f("Playlist.dat", ios::binary | ios::in);
+
+            int y = 4;
+            gotoxy(10, 2); cout << " U N S O R T E D  L I S T  O F  S O N G S : ";
+            while (f.read((char*)&mp, sizeof(mp)))
+            {
+                gotoxy(45, y);
+                cout << mp.ret_songname();
+                y++;
+
+            }
+            f.close();
+            system("PAUSE");
+
+            sort_songname();
             gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
             cin >> choice;
-        }
+        }/*
         else if (temp == 3)
         {
             system("CLS");
-            gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
+
             cin >> choice;
         }
         else if (temp == 4)
         {
             system("CLS");
-            gotoxy(60, 17); cout << "DO YOU WANT TO SAVE THIS ORDER AS A NEW PLAYLIST? [Y/N]";
             cin >> choice;
-        }
-    } while (temp != 5);
+        }*/
+    } while (temp != 3);
 }
 int main()
 {
@@ -492,13 +548,13 @@ int main()
         system("CLS");
         gotoxy(80, 9); cout << "__________________________";
         gotoxy(75, 10); cout << "    M U S I C    P L A Y L I S T";
-        gotoxy(77, 17); cout << "1.A D D  S O N G  I N  T H E  L I S T :";
-        gotoxy(77, 19); cout << "2.D I S P L A Y  P L A Y L I S T :";
-        gotoxy(77, 21); cout << "3.E D I T  P L A Y L I S T :";
-        gotoxy(77, 23); cout << "4.S H U F F L E  P L A Y L I S T :";
-        gotoxy(77, 25); cout << "5.S O R T  P L A Y L I S T : ";
-        gotoxy(77, 27); cout << "6.S U G G E S T I V E  P L A Y L I S T :";
-        gotoxy(77, 29); cout << "7.E X I T : ";
+        gotoxy(77, 17); cout << "1. A D D  S O N G  I N  T H E  L I S T :";
+        gotoxy(77, 19); cout << "2. D I S P L A Y  P L A Y L I S T :";
+        gotoxy(77, 21); cout << "3. E D I T  P L A Y L I S T :";
+        gotoxy(77, 23); cout << "4. S H U F F L E  P L A Y L I S T :";
+        gotoxy(77, 25); cout << "5. S O R T  P L A Y L I S T : ";
+        gotoxy(77, 27); cout << "6. S U G G E S T I V E  P L A Y L I S T :";
+        gotoxy(77, 29); cout << "7. E X I T : ";
         cin >> choice;
 
         if (choice == 1)
@@ -509,7 +565,7 @@ int main()
         else if (choice == 2)
         {
             system("CLS");
-            display_list();
+            display();
         }
         else if (choice == 3)
         {
